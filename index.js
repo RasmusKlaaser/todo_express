@@ -1,4 +1,5 @@
 const express = require('express')
+const fs = require('fs')
 const app = express()
 
 
@@ -8,7 +9,19 @@ app.set('views', path.join(__dirname, 'views'))
 
 
 app.get('/', (req,res) =>{
-    res.render('index')
+    // get data from file
+    fs.readFile('./tasks', 'utf8', (err, data) =>{
+        if (err) {
+            console.error(err);
+            return;
+        }
+        console.log(data);
+        console.log(typeof data);
+        console.log(data.split("\n"))
+            // task lsit data
+        const tasks = data.split("\n") 
+        res.render('index',{tasks: tasks})
+    });
 })
 
 
