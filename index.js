@@ -46,6 +46,11 @@ app.get('/', (req, res) =>{
 app.use(express.urlencoded({ extended: true}));
 
 app.post('/', (req, res) =>{
+    // control data from form
+    let error = null
+    if(req.body.task.trim().length == 0){
+        error = 'Please insert correct task data'
+    } 
     // tasks list data from file
     readFile('./tasks.json')
         .then(tasks =>{
@@ -71,16 +76,6 @@ app.post('/', (req, res) =>{
             res.redirect('/')
         })
 
-            fs.writeFile('./tasks.json', data, "utf-8", err => {
-                if (err){
-                    console.error(err);
-                    return;
-                } else {
-                    console.log('saved')
-                } 
-                // redirect to / to see result
-                res.redirect('/')
-            } )
     app.get('/delete-task/:taskId', (req, res) => {
         let deletedTaskId = parseInt(req.params.taskId)
         readFile('./tasks.json')
@@ -97,6 +92,18 @@ app.post('/', (req, res) =>{
         })
     })
 })  
+
+app.get('/delete-all', (req, res) => {
+	readFile('./tasks.json')
+	.then(tasks => {
+		tasks.splice(0, tasks.length)
+		data = JSON.stringify(tasks, null, 2)
+		writeFile('./tasks.json', data)
+		// redirect to / to see result
+		res.redirect('/')
+	})
+	
+})
 
 app.listen(3001, () =>{
     console.log('Example app is started at https://localhost:3001')
